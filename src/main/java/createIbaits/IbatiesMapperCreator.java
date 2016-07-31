@@ -30,7 +30,7 @@ public class IbatiesMapperCreator {
     }
 
     public IbatiesMapperCreator endBuild(){
-        mapper.append("</sqlMap>");
+        mapper.append("\r\n</sqlMap>");
         return this;
     }
     public IbatiesMapperCreator(ClassEntity classEntity, TableEntity tableEntity){
@@ -61,7 +61,7 @@ public class IbatiesMapperCreator {
         StringBuilder builder = new StringBuilder();
         builder.append("<resultMap> id=\""+id+"\"  class=\""+classFullPath+"\">\r\n");
         for(int i =0 ;i<tableEntity.getColumn().size();i++){
-            builder.append("<result column=\""+classEntity.getAttributeMap().get(i).getName()+"\" property=\""+tableEntity.getColumn().get(i).getName()+"\"/>\r\n");
+            builder.append("<result column=\""+tableEntity.getColumn().get(i).getName()+"\" property=\""+classEntity.getAttributeMap().get(i).getName()+"\"/>\r\n");
         }
         builder.append("</resultMap>");
         return builder.toString();
@@ -107,28 +107,22 @@ public class IbatiesMapperCreator {
         List<ColumnEntry> classColumns = classEntity.getAttributeMap();
 
         StringBuilder selectBuilder = new StringBuilder();
-        selectBuilder.append("<select id=\""+selectID+"\" parameterClass=\"map\" resultMap=\"" + resultType + "\"\r\n");
+        selectBuilder.append("\r\n<select id=\""+selectID+"\" parameterClass=\"map\" resultMap=\"" + resultType + "\"\r\n");
         StringBuilder selectContent = new StringBuilder();
-        for(int i = 0;i < tableColumns.size() ;i++){
-            selectContent.append(tableColumns.get(i).getName());
-            if(i < tableColumns.size()-1){
-                selectContent.append(" , ");
-            }
-            if(i<selectResultIndexes.size()-1){
-                selectContent.append(",");
-            }
-        }
-        selectBuilder.append("SELECT "+selectContent+" from "+tableEntity.getTableName()+"\r\n");
+
+        selectBuilder.append("SELECT * from "+tableEntity.getTableName()+"\r\n");
         selectBuilder.append(createWhere(condition));
         if(pageAble) {
-            selectBuilder.append(" limit start=#start# ,pageSize=#pageSize#");
+            selectBuilder.append(" limit #pageNum# ,#pageSize#");
         }
         return selectBuilder.toString();
     }
 
+
+
     private String createInsert(String id){
         StringBuilder insertBuilder = new StringBuilder();
-        insertBuilder.append("<insert id=\""+id+"\" paramClass=\""+classEntity.getClassName()+"\">\r\n");
+        insertBuilder.append("\r\n<insert id=\""+id+"\" paramClass=\""+classEntity.getClassName()+"\">\r\n");
         insertBuilder.append("INSERT INTO "+tableEntity.getTableName()+"(");
         List<ColumnEntry> keys = tableEntity.getColumn();
         for(int i=1;i<keys.size();i++){

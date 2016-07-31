@@ -16,6 +16,7 @@ public class SqlResolve {
     public TableEntity solve(String sql){
         List<Character> chars = new ArrayList<Character>();
         chars.add('\r'); chars.add('\n');
+        //过滤指定字符
         String tmp = TrStringHelper.filterCharacter(sql, chars);
         return new TableEntity(resolveTableName(tmp),resolveColumn(tmp));
     }
@@ -76,7 +77,7 @@ public class SqlResolve {
     }
 
 
-    private List<ColumnEntry> resolveColumn(String sql){
+    private List<ColumnEntry>  resolveColumn(String sql){
        String content = sql.substring(sql.indexOf('(')+1,sql.lastIndexOf(')')-1);
         List<ColumnEntry> columnEntries = new ArrayList<ColumnEntry>();
        String[] columns = content.split(",");
@@ -126,7 +127,7 @@ public class SqlResolve {
     }
 
     private boolean isColumnContent(String column){
-       return TableSolveHelper.isColumn(column);
+       return TableTypeHelper.isColumn(column);
     }
 
 

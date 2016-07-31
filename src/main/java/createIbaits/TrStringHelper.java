@@ -48,4 +48,45 @@ public class TrStringHelper {
         }
         return builder.toString();
     }
+
+    public static  String convertToTuofeng(String name,boolean firstKey){
+        boolean bottomPre = firstKey ;
+        StringBuilder className = new StringBuilder();
+        for(char a:name.toCharArray()){
+            if(a == '\'' || a == '‘'){
+                continue;
+            }
+            if(a !='_'&&(!bottomPre)){
+                className.append(String.valueOf(a));
+            }
+            if(a=='_'){
+                bottomPre=true;
+                continue;
+            }
+            if(a!='_'&&bottomPre){
+                className.append(String.valueOf(Character.toUpperCase(a)));
+                bottomPre=false;
+            }
+        }
+        return className.toString();
+    }
+
+    public static  boolean containType(String  content ,String type){
+        if(!content.contains(type)){
+            return false ;
+        }
+        StringBuilder builder = new StringBuilder();
+        for(char tmp :content.toCharArray()){
+            if(tmp != ' '){
+                builder.append(tmp);
+            }else{
+                String parseType = builder.toString();
+                if( parseType.equalsIgnoreCase(type)){
+                    return true ;
+                }
+                builder.delete(0,builder.length());
+            }
+        }
+        return false ;
+    }
 }

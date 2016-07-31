@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 /**
  * Created by jnkmhbl on 16/5/17.
  */
-public class TableSolveHelper {
+public class TableTypeHelper {
 
     private static boolean containsSqlType(String column){
         if(StringUtils.isEmpty(column)){

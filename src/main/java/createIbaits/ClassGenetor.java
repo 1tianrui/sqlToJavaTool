@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by jnkmhbl on 16/5/16.
  */
-public class ClassGenetor {
+public class    ClassGenetor {
     private StringBuilder classContentBuilder ;
     private ClassEntity entity;
     public ClassGenetor(ClassEntity entity)throws  Exception{
