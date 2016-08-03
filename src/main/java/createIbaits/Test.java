@@ -5,13 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 通过数据库创建语句到ibaits描述文件
- * 1.字段名称
- * 2.字段类型
- *
- * PO类命名规则  tableName转成驼峰加PO
- * resultID   tableName转成驼峰+Result
- *
+ * Create Table 语句从 Sequel 拷贝
  *
  * 局限性，where 后的条件语句每个字段只能出现一次 ; 单个判断
  */
@@ -39,8 +33,11 @@ public class Test {
 
         sqls.add("update table set coupon_id =  where activity_id =  and user_id = ");
         SqlToMapperTranslater toMapperTranslater = new SqlToMapperTranslater(sql,sqls,"全路径名称");
+        //生成dao 层的 Hashmap 避免手动写
         toMapperTranslater.printJavaMap();
+        //生成ibatis mapper文件
         toMapperTranslater.printIbatisMapper();
+        //生成java Bean
         toMapperTranslater.printJavaBean();
     }
 
