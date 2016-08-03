@@ -24,7 +24,7 @@ public class IbatiesMapperCreator {
     }
 
     public IbatiesMapperCreator startBuild(String id,String fullPath){
-       mapper.append(this.createHeader()+"\r\n");
+       mapper.append(this.createHeader(fullPath)+"\r\n");
        mapper.append(this.createResultMap(id,fullPath)+"\r\n");
        return this;
     }
@@ -38,10 +38,11 @@ public class IbatiesMapperCreator {
         this.tableEntity = tableEntity;
         mapper = new StringBuilder();
     }
-    private  String createHeader(){
+    private  String createHeader(String fullPath){
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE sqlMap PUBLIC \"-//ibatis.apache.org//DTD SQL Map 2.0//EN\" \"http://ibatis.apache.org/dtd/sql-map-2.dtd\">\n" +
-                "<sqlMap namespace=\""+classEntity.getClassName()+"\">";
+                "<sqlMap namespace=\""+classEntity.getClassName()+"\">\r\n \t<typeAlias alias=\""+classEntity.getClassName()+"\"\n" +
+                "\t\ttype=\""+fullPath+"\\."+classEntity.getClassName()+"\" />";
         return header;
     }
 

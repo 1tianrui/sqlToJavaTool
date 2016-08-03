@@ -71,22 +71,27 @@ public class TrStringHelper {
         return className.toString();
     }
 
-    public static  boolean containType(String  content ,String type){
+    public static  int containsName(String  content ,String type,int targetSequence){
         if(!content.contains(type)){
-            return false ;
+            return -1 ;
         }
+        int sequence = 0 ;
         StringBuilder builder = new StringBuilder();
+        int index = 0;
         for(char tmp :content.toCharArray()){
             if(tmp != ' '){
                 builder.append(tmp);
             }else{
                 String parseType = builder.toString();
                 if( parseType.equalsIgnoreCase(type)){
-                    return true ;
+                    return index ;
                 }
                 builder.delete(0,builder.length());
             }
+            index ++;
         }
-        return false ;
+        return -1;
     }
+
+
 }

@@ -18,7 +18,7 @@ public class SqlToMapperTranslater {
     private  List<String>  javaMapList = new ArrayList<String>();
 
 
-    public SqlToMapperTranslater(String createTableSql,List<String> sqls){
+    public SqlToMapperTranslater(String createTableSql,List<String> sqls, String fullPath){
         this.createTableSql = createTableSql ;
         this.sqls = sqls ;
         SqlResolve sqlResolve = new SqlResolve();
@@ -26,11 +26,11 @@ public class SqlToMapperTranslater {
         ClassCreator classCreator = new ClassCreator();
         classEntity = classCreator.create(tableEntity);
         creator = new IbatiesMapperCreator(classEntity,tableEntity);
-        this.generateMapper();
+        this.generateMapper(fullPath);
     }
 
-    private void generateMapper(){
-        creator.startBuild("编号", "Java类的全路径");
+    private void generateMapper(String fullPath){
+        creator.startBuild("编号",fullPath );
         for(String sql : sqls){
            int type = getType(sql);
            if(type  < 0){
@@ -80,7 +80,7 @@ public class SqlToMapperTranslater {
     }
 
     private String buildJavaMap(List<Integer> indexList,WhereCondition condition,boolean pageAble){
-       String content = this.buildJavaMap(indexList,condition);
+       String content = this.buildJavaMap(indexList, condition);
         if(pageAble)
         content = content +"map.put(\"pageNum\",###);\r\nmap.put(\"pageSize\",###)";
         return content;
@@ -92,47 +92,47 @@ public class SqlToMapperTranslater {
         List<Integer> columns = new ArrayList<Integer>();
         List<Integer> inColumns = new ArrayList<Integer>();
         int index =0 ;
-        for(ColumnEntry entry : tableEntity.getColumn()){
-            if(whereFields.contains(entry.getName())){
-                int preIndex = whereFields.indexOf(entry.getName()) -1 ;
-                int nextIndex = whereFields.indexOf(entry.getName())+entry.getName().length();
-                if(!(whereFields.charAt(preIndex) == ' ' && whereFields.charAt(nextIndex) == ' ')){
-                    continue;
-                }
-               int columnIndex = whereFields.indexOf(entry.getName())+entry.getName().length()-1;
-               while(true){
-                   if(whereFields.charAt(columnIndex) == ' ')
-                   columnIndex ++ ;
-                   else
-                   break ;
-               }
-                int endIndex = columnIndex +4;
-                if(columnIndex +4 >whereFields.length() -1){
-                    endIndex = whereFields.length() ;
-                }
-                String operator = whereFields.substring(columnIndex,endIndex);
-
-                if(operator.contains(">=")){
-                    operators.add(">=");
-                }else if(operator.contains("<=")){
-                    operators.add("<=");
-                }else if(operator.contains("=")){
-                    operators.add("=");
-                }else if(operator.contains("<")){
-                    operators.add("<");
-                }else if(operator.contains(">")){
-                    operators.add(">");
-                }else if(operator.contains("in")){
-                    inColumns.add(index);
-                    continue;
-                }
-                else {
-                    System.out.println("operator parse error");
-                }
-                columns.add(index);
+        for(ColumnEntry entry : tableEntity.getColumn()) {
+            if (!whereFields.contains(entry.getName())) {
+                continue;
             }
-            index ++ ;
+            int lastIndex = TrStringHelper.containsName(whereFields, entry.getName());
+            if (lastIndex < 0)
+                continue;
+            int columnIndex = lastIndex + 1;
+            while (true) {
+                if (whereFields.charAt(columnIndex) == ' ')
+                    columnIndex++;
+                else
+                    break;
+            }
+            int endIndex = columnIndex + 4;
+            if (columnIndex + 4 > whereFields.length() - 1) {
+                endIndex = whereFields.length();
+            }
+            String operator = whereFields.substring(columnIndex, endIndex);
+
+            if (operator.contains(">=")) {
+                operators.add(">=");
+            } else if (operator.contains("<=")) {
+                operators.add("<=");
+            } else if (operator.contains("=")) {
+                operators.add("=");
+            } else if (operator.contains("<")) {
+                operators.add("<");
+            } else if (operator.contains(">")) {
+                operators.add(">");
+            } else if (operator.contains("in")) {
+                inColumns.add(index);
+                continue;
+            } else {
+                System.out.println("operator parse error");
+            }
+            columns.add(index);
+
+            index++;
         }
+
         WhereCondition condition = new WhereCondition();
         condition.setJudgeOperators(operators);
         condition.setInListColumnIndexes(inColumns);
@@ -148,7 +148,7 @@ public class SqlToMapperTranslater {
 
         int index =0 ;
         for(ColumnEntry entry : entries){
-            if(TrStringHelper.containType(updateFields, entry.getName())){
+            if(TrStringHelper.containsName(updateFields, entry.getName()) > 0){
                 indexList.add(index);
             }
             index ++;
